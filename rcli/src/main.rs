@@ -1,6 +1,6 @@
-use std::fs::File;
-use serde::{Deserialize, Serialize};
 use anyhow::Result;
+use serde::{Deserialize, Serialize};
+use std::fs::File;
 
 #[allow(dead_code)]
 #[derive(Debug, Serialize, Deserialize)]
@@ -29,13 +29,12 @@ impl Player {
     }
 }
 
-fn main() -> Result<()>{
+fn main() -> Result<()> {
     let fd = File::open("assets/juventus.csv")?;
-    let mut reader= csv::Reader::from_reader(fd);
+    let mut reader = csv::Reader::from_reader(fd);
     for result in reader.deserialize() {
         let player: Player = result?;
         println!("{:?}", player.to_json())
     }
     Ok(())
 }
-
