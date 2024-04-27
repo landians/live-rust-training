@@ -11,23 +11,28 @@ pub fn process_pwd(opts: &PwdOpts) -> anyhow::Result<()> {
     let mut password = Vec::new();
     let mut chars = Vec::new();
 
+    // 随机选择大写字母
     if opts.upper {
         chars.extend_from_slice(UPPER);
         password.push(*UPPER.choose(&mut rng).expect("UPPER won't be empty"));
     }
+    // 随机选择小写字母
     if opts.lower {
         chars.extend_from_slice(LOWER);
         password.push(*LOWER.choose(&mut rng).expect("LOWER won't be empty"));
     }
+    // 随机选择数字
     if opts.number {
         chars.extend_from_slice(NUMBER);
         password.push(*NUMBER.choose(&mut rng).expect("NUMBER won't be empty"));
     }
+    // 随机选择特殊符号
     if opts.symbol {
         chars.extend_from_slice(SYMBOL);
         password.push(*SYMBOL.choose(&mut rng).expect("SYMBOL won't be empty"));
     }
 
+    // 根据命令行参数长度来补齐剩余的密码
     for _ in 0..(opts.length - password.len() as u8) {
         let c = chars
             .choose(&mut rng)
@@ -35,6 +40,7 @@ pub fn process_pwd(opts: &PwdOpts) -> anyhow::Result<()> {
         password.push(*c);
     }
 
+    // 将已经生成的密码进行洗牌打乱
     password.shuffle(&mut rng);
 
     let password = String::from_utf8(password)?;
