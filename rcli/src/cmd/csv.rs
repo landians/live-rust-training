@@ -1,6 +1,7 @@
-use crate::cmd::opts::{CsvOpts, OutputFormat};
+use clap::{Parser, ValueEnum};
 use serde::{Deserialize, Serialize};
 use std::fs;
+use std::path::Path;
 
 const DEFAULT_CAPACITY: usize = 128;
 
@@ -16,6 +17,38 @@ struct Player {
     nationality: String,
     #[serde(rename = "Kit Number")]
     kit_number: u8,
+}
+
+#[derive(Debug, Parser)]
+pub struct CsvOpts {
+    #[arg(short, long, value_parser = validate_input_file)]
+    pub input: String,
+
+    #[arg(short, long)]
+    pub output: Option<String>,
+
+    #[arg(short, long, value_enum, default_value_t = OutputFormat::Json)]
+    pub format: OutputFormat,
+
+    #[arg(short, long, default_value_t = ',')]
+    pub delimiter: char,
+
+    #[arg(long, default_value_t = true)]
+    pub header: bool,
+}
+
+#[derive(Debug, Clone, Copy, ValueEnum)]
+pub enum OutputFormat {
+    Json,
+    Yaml,
+}
+
+fn validate_input_file(filename: &str) -> Result<String, &'static str> {
+    if Path::new(filename).exists() {
+        Ok(filename.into())
+    } else {
+        Err("File is not exists")
+    }
 }
 
 pub fn process_csv(opts: &CsvOpts) -> anyhow::Result<()> {

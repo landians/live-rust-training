@@ -1,10 +1,28 @@
-use crate::cmd::opts::PwdOpts;
+use clap::Parser;
 use rand::prelude::SliceRandom;
 
 const UPPER: &[u8] = b"ABCDEFGHJKLMNPQRSTUVWXYZ";
 const LOWER: &[u8] = b"abcdefghijkmnopqrstuvwxyz";
 const NUMBER: &[u8] = b"123456789";
 const SYMBOL: &[u8] = b"!@#$%^&*_";
+
+#[derive(Debug, Parser)]
+pub struct PwdOpts {
+    #[arg(long, default_value_t = true)]
+    pub upper: bool,
+
+    #[arg(long, default_value_t = true)]
+    pub lower: bool,
+
+    #[arg(long, default_value_t = true)]
+    pub number: bool,
+
+    #[arg(long, default_value_t = true)]
+    pub symbol: bool,
+
+    #[arg(short, long, default_value_t = 6)]
+    pub length: u8,
+}
 
 pub fn process_pwd(opts: &PwdOpts) -> anyhow::Result<()> {
     let mut rng = rand::thread_rng();
